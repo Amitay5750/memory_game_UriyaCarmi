@@ -4,7 +4,10 @@ let moves = 0;
 let flippedCards = [];
 let matchedCount = 0;
 
-// כאן יש להקפיד ששמות הקבצים תואמים בדיוק לשמות התמונות שבתיקייה שלך
+// --- תוספת: הגדרת צליל מחיאות כפיים ---
+// ודא שיש לך קובץ בשם cheer.mp3 בתיקייה
+const cheerSound = new Audio('cheer.mp3'); 
+
 const baseImages = [
     'img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg',
     'img5.jpg', 'img6.jpg', 'img7.jpg', 'img8.jpg',
@@ -12,25 +15,21 @@ const baseImages = [
     'img13.jpg', 'img14.jpg', 'img15.jpg', 'img16.jpg'
 ];
 
-// שכפול הרשימה ליצירת 16 זוגות (32 קלפים)
 const images = [...baseImages, ...baseImages];
 
-// פונקציה לערבוב המערך
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
 
-// פונקציה לבניית הלוח
 function createBoard() {
     const shuffledImages = shuffle(images);
-    board.innerHTML = ''; // ניקוי הלוח הקיים
+    board.innerHTML = ''; 
     
     shuffledImages.forEach((imgSrc) => {
         const card = document.createElement('div');
         card.classList.add('card');
-        card.dataset.value = imgSrc; // שמירת שם התמונה לבדיקת התאמה
+        card.dataset.value = imgSrc;
         
-        // יצירת הגב והפנים של הקלף
         card.innerHTML = `
             <div class="card-back">❓</div>
             <div class="card-front"><img src="${imgSrc}" alt="תמונת משחק"></div>
@@ -41,9 +40,7 @@ function createBoard() {
     });
 }
 
-// פונקציה המטפלת בלחיצה על קלף
 function flipCard() {
-    // מונע לחיצה אם כבר יש 2 קלפים פתוחים, או אם לחצו על קלף שכבר פתוח/הותאם
     if (flippedCards.length < 2 && !this.classList.contains('flipped') && !this.classList.contains('matched')) {
         this.classList.add('flipped');
         flippedCards.push(this);
@@ -56,24 +53,32 @@ function flipCard() {
     }
 }
 
-// פונקציה לבדיקת התאמה בין שני הקלפים הפתוחים
 function checkMatch() {
     const [card1, card2] = flippedCards;
     
     if (card1.dataset.value === card2.dataset.value) {
-        // יש התאמה! נוסיף את אפקט ההצלחה
+        // --- יש התאמה! ---
         card1.classList.add('matched');
         card2.classList.add('matched');
         
+        // --- תוספת: הפעלת צליל ---
+        cheerSound.play(); 
+
+        // --- תוספת: הפעלת קונפטי ---
+        // זו פונקציה מהספרייה החיצונית שטענו ב-HTML
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 } // הקונפטי יתחיל קצת מתחת למרכז המסך
+        });
+
         flippedCards = [];
         matchedCount += 2;
         
-        // בדיקת ניצחון
         if (matchedCount === images.length) {
             setTimeout(() => alert(`כל הכבוד! סיימת את המשחק ב-${moves} ניסיונות!`), 600);
         }
     } else {
-        // אין התאמה - הופכים חזרה אחרי שנייה
         setTimeout(() => {
             card1.classList.remove('flipped');
             card2.classList.remove('flipped');
@@ -82,7 +87,6 @@ function checkMatch() {
     }
 }
 
-// פונקציה לאיפוס המשחק
 function resetGame() {
     moves = 0;
     matchedCount = 0;
@@ -91,5 +95,4 @@ function resetGame() {
     createBoard();
 }
 
-// הפעלה ראשונית של המשחק
 createBoard();
