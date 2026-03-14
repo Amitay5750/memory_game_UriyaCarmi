@@ -1,0 +1,98 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: #333;
+}
+
+.game-stats {
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+button {
+    padding: 8px 16px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 15px;
+    font-family: inherit;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(8, 80px); /* 8 עמודות של 80 פיקסלים */
+    gap: 12px;
+    justify-content: center;
+    perspective: 1000px; /* נדרש כדי שההיפוך התלת-ממדי ייראה מציאותי */
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.card {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    cursor: pointer;
+    transform-style: preserve-3d; /* שומר על התלת-ממד של הילדים (גב ופנים) */
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+/* הצד הקדמי (התמונה) והצד האחורי (סימן השאלה) */
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    backface-visibility: hidden; /* מסתיר את הצד ההפוך */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    overflow: hidden; /* מונע מהתמונה לגלוש החוצה מהפינות המעוגלות */
+}
+
+/* גב הקלף - מה שרואים בהתחלה */
+.card-back {
+    background-color: #ffcc00;
+    font-size: 40px;
+    border: 2px solid #e6b800;
+}
+
+/* פנים הקלף - מכיל את התמונה */
+.card-front {
+    background-color: white;
+    transform: rotateY(180deg); /* מסובב מראש כדי שיתיישר כשהקלף מתהפך */
+}
+
+/* הפתרון לבעיית גודל התמונות */
+.card-front img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* חותך את התמונה כך שתמלא את הריבוע בצורה מושלמת */
+}
+
+/* מחלקה המתווספת בלחיצה - הופכת את הקלף */
+.card.flipped {
+    transform: rotateY(180deg);
+}
+
+/* מחלקה המתווספת כשיש התאמה מוצלחת */
+.card.matched {
+    transform: rotateY(180deg) scale(1.05); /* משאיר הפוך ומגדיל טיפה */
+    box-shadow: 0 0 15px 5px rgba(40, 167, 69, 0.8); /* הילה ירוקה זוהרת */
+    z-index: 2; /* שם את הקלפים המנצחים מעל השאר */
+}
